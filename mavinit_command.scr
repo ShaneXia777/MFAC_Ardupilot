@@ -1,0 +1,4 @@
+##################################################
+if mavinit_command.scr is here ,we run a part of PSO
+if mavinit_command.scr is not  here ,we run a Original code
+############################################################

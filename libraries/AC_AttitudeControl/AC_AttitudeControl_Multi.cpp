@@ -519,14 +519,7 @@ void AC_AttitudeControl_Multi::rate_controller_run()
 
     if (now>45000)
 {
-	// sum3+=250*abs(_motors.get_roll())+1000*abs(_ang_vel_body.x-gyro_latest.x);
-    // sum4+=250*abs(_motors.get_pitch())+1000*abs(_ang_vel_body.y-gyro_latest.y);
-    // sum5+=750*abs(_motors.get_yaw())+1500*abs(_ang_vel_body.z-gyro_latest.z);
-    //0916
-    sum3+=245.4457734*abs(_motors.get_roll())+1000*abs(_ang_vel_body.x-gyro_latest.x);
-    sum4+=240.6178*abs(_motors.get_pitch())+1000*abs(_ang_vel_body.y-gyro_latest.y);
-    sum5+=864.131*abs(_motors.get_yaw())+1500*abs(_ang_vel_body.z-gyro_latest.z);
-    
+   
 
     // //*****************************************************************************************************************************************
  if (now<85000)
@@ -596,62 +589,5 @@ void AC_AttitudeControl_Multi::parameter_sanity_check()
 
 float AC_AttitudeControl_Multi::MFAC(float achieved_rate,float desired_rate,float eita,float miu,float rou1,float rou2,float rou3,float lamda)
 {
-
-	float now_rate=achieved_rate;
-
-	float _MFAC_now=0.0f;
-	static float MFAC_last1=0.0f;
-    static float MFAC_last2=0.0f;
-   
-    static float last1_rate=0.0f;
-    static float last2_rate=0.0f;
-    static float last3_rate=0.0f;
-
-    static float fai1_last=0;
-	static float fai2_last=0;
-    static float fai3_last=0.01;
-
-	float fai1_now = fai1_last +eita * (now_rate-last1_rate-fai1_last*(last1_rate-last2_rate)-fai2_last*(last2_rate-last3_rate)-fai3_last*(MFAC_last1 - MFAC_last2))*(last1_rate-last2_rate)/
-			(miu + (last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2));
-	
-	if ((abs(fai1_now) <= epsilon) || (sqrtf((last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2))<= epsilon)||fai1_now<0)
-		{
-			// fai1_now = gains.fai1;
-			fai1_now = 0;
-		}
-		
-	
-	float fai2_now = fai2_last +eita * (now_rate-last1_rate-fai1_last*(last1_rate-last2_rate)-fai2_last*(last2_rate-last3_rate)-fai3_last*(MFAC_last1 - MFAC_last2))*(last2_rate-last3_rate)/
-			(miu + (last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2));
-	if ((abs(fai2_now) <= epsilon) || (sqrtf((last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2))<= epsilon)||fai2_now<0)
-		{
-			fai2_now = 0;
-		}
-
-	
-	float fai3_now = fai3_last +eita * (now_rate-last1_rate-fai1_last*(last1_rate-last2_rate)-fai2_last*(last2_rate-last3_rate)-fai3_last*(MFAC_last1 - MFAC_last2))*(MFAC_last1 - MFAC_last2)/
-			(miu + (last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2));
-	if ((abs(fai3_now) <= epsilon) || (sqrtf((last1_rate-last2_rate)*(last1_rate-last2_rate)+(last2_rate-last3_rate)*(last2_rate-last3_rate) +(MFAC_last1 - MFAC_last2) * (MFAC_last1 - MFAC_last2))<= epsilon)||fai3_now<0)
-		{
-			fai3_now = 0.01;
-		}
-
-	// float kesi=fai2_now/(lamda+fai2_now*fai2_now);
-	_MFAC_now=MFAC_last1+fai3_now*(rou3*(desired_rate-now_rate)-rou1*fai1_now*(now_rate-last1_rate)-rou2*fai2_now*(last1_rate-last2_rate))/(lamda+fai3_now*fai3_now);
-
-
-	//update prameters
-	last3_rate=last2_rate;
-	last2_rate=last1_rate;
-	last1_rate=now_rate;
-
-	fai1_last=fai1_now;
-	fai2_last=fai2_now;
-	fai3_last=fai3_now;
-
-	
-	MFAC_last2=MFAC_last1;
-	MFAC_last1=_MFAC_now;
-
 	return _MFAC_now;
 }
